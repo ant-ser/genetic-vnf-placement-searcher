@@ -185,7 +185,7 @@ class Config:
             config_parser.getselectionoperator(operators_section, "selection_operator"),
             config_parser.getcrossoveroperator(operators_section, "crossover_operator"),
             config_parser.getmutationoperators(operators_section, "mutation_operators"),
-            config_parser.getrepairoperators(operators_section, "repair_operators"),
+            config_parser.getrepairoperators(operators_section, "repair_operators", fallback=[]),
             config_parser.getint(general_section, "population_size"),
             config_parser.getfloat(general_section, "time_limit"),
             config_parser.getfloat(general_section, "crossover_probability"),
@@ -193,5 +193,5 @@ class Config:
             config_parser.getint(general_section, "num_elite"),
             config_parser.get(
                 general_section, "initial_population_file_path", fallback=None
-            ),
+            ) or None,
         )

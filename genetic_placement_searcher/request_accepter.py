@@ -48,7 +48,7 @@ class RequestAccepter:
                 "Only requests present in the initial placement can be accepted."
             )
         if designated_nodes_per_request[request] is not None:
-            raise ValueError(f"Request {request} is already been accepted.")
+            raise ValueError(f"Request {request} has already been accepted.")
         if self._is_request_compatible_with_currently_accepted_requests(request):
             suitable_nodes = self._find_suitable_nodes_for_request(request)
             if suitable_nodes is not None:

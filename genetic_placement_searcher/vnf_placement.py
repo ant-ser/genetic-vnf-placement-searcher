@@ -379,7 +379,7 @@ class VNFChainPlacement:
         # The number of digits taken into account when evaluating some of the 
         # constraints that the placement has to satisfy to be considered valid.
         # This is necessary to avoid floating point errors.
-        validity_ndigits = 2
+        validity_ndigits = 6
         return (
             self.cumulative_resource_shortage == 0
             and round(self.cumulative_excess_latency, validity_ndigits) == 0

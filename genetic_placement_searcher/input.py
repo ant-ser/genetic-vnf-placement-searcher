@@ -189,7 +189,7 @@ class InputParser:
         )
         self.incompatible_nodes_per_request = {
             request_index: {
-                vnf_index: {int(elem) for elem in row[2:] if elem.isnumeric()}
+                vnf_index: {int(elem) - 1 for elem in row[2:] if elem.isnumeric()}
                 for vnf_index, row in enumerate(rows_by_vnf_index)
             }
             for request_index, rows_by_vnf_index in enumerate(rows_by_request)

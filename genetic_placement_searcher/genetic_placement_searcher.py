@@ -1,7 +1,11 @@
 import json
 from os import path
 from functools import partial
-from typing import Optional
+from typing import (
+    Any,
+    Callable,
+    Optional
+)
 
 import genetic_operators
 from config import Config
@@ -9,6 +13,7 @@ from genetic_algorithm import (
     Chromosome,
     GeneticAlgorithm,
     OperatorSuite,
+    RepT,
     Settings,
     TimeLimitTerminationCondition,
 )
@@ -21,17 +26,16 @@ def search_optimal_placement(
     input_: Input, config: Config
 ) -> Optional[MultiFlavouredVNFChainPlacement]:
     genetic_algorithm = _setup_genetic_algorithm(input_, config)
+    decoding_function = genetic_algorithm.operator_suite.decoding_function
     termination_condition = TimeLimitTerminationCondition(config.time_limit)
     initial_population = (
-        _parse_initial_population_file(config.initial_population_file_path)
+        _parse_initial_population_file(config.initial_population_file_path, decoding_function)
         if config.initial_population_file_path is not None
         else None
     )
     fittest_chromosome = genetic_algorithm.run(
         termination_condition, initial_population
     )
-    if not fittest_chromosome.encoded_data.is_valid():
-        pass
     placement: Optional[MultiFlavouredVNFChainPlacement] = (
         fittest_chromosome.encoded_data
         if fittest_chromosome.encoded_data.is_valid()
@@ -110,6 +114,7 @@ def _setup_genetic_algorithm_settings(config: Config) -> Settings:
 
 def _parse_initial_population_file(
     initial_population_file_path: str,
+    decoding_function: Optional[Callable[[RepT], Any]] = None
 ) -> list[Chromosome[list[list[int]]]]:
     with open(
         path.normpath(initial_population_file_path), mode="r", encoding="utf-8"
@@ -118,5 +123,9 @@ def _parse_initial_population_file(
         for row in initial_population_file:
             genes = json.loads(row)
             chromosome = Chromosome(genes)
+            if decoding_function is not None:
+                chromosome.decoding_function = decoding_function
+                if not chromosome.encoded_data.is_valid():
+                    continue
             initial_population.append(chromosome)
         return initial_population

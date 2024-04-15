@@ -1,3 +1,4 @@
+import math
 from collections import Counter
 from functools import cached_property
 from typing import Optional, Sequence
@@ -375,10 +376,14 @@ class VNFChainPlacement:
         return not self.accepts(request)
 
     def is_valid(self) -> bool:
+        # The number of digits taken into account when evaluating some of the 
+        # constraints that the placement has to satisfy to be considered valid.
+        # This is necessary to avoid floating point errors.
+        validity_ndigits = 2
         return (
             self.cumulative_resource_shortage == 0
-            and self.cumulative_excess_latency == 0
-            and self.cumulative_bandwidth_shortage == 0
+            and round(self.cumulative_excess_latency, validity_ndigits) == 0
+            and round(self.cumulative_bandwidth_shortage, validity_ndigits) == 0
             and self.incompatible_placements_count == 0
         )
 
